@@ -1,50 +1,122 @@
 #include <iostream>
+using namespace std;
 
-struct Package
+#define MAX 100
+
+// --- STACK IMPLEMENTATION (DO NOT MODIFY) ---
+struct Stack
 {
-    std::string packageID;
-    std::string destinationCity;
-    int dimensions[3];
+    int arr[MAX];
+    int top;
 };
 
-struct Node
+void initStack(Stack *s) { s->top = -1; }
+bool isStackEmpty(Stack *s) { return s->top == -1; }
+void push(Stack *s, int val)
 {
-    Package data;
-    Node *next;
-};
-
-Node *top = NULL;
-
-void push(Package p)
+    if (s->top < MAX - 1)
+    {
+        s->arr[++(s->top)] = val;
+    }
+}
+int pop(Stack *s)
 {
-    Node *n = new Node;
-    n->data = p;
-    n->next = top;
-    top = n;
+    if (!isStackEmpty(s))
+    {
+        return s->arr[(s->top)--];
+    }
+    return -1; // Error or Empty
 }
 
-void pop()
+// --- QUEUE IMPLEMENTATION (DO NOT MODIFY) ---
+struct Queue
 {
-    if (top == NULL)
+    int arr[MAX];
+    int front;
+    int rear;
+};
+
+void initQueue(Queue *q)
+{
+    q->front = -1;
+    q->rear = -1;
+}
+bool isQueueEmpty(Queue *q) { return q->front == -1 || q->front > q->rear; }
+void enqueue(Queue *q, int val)
+{
+    if (q->rear < MAX - 1)
+    {
+        if (q->front == -1)
+            q->front = 0;
+        q->arr[++(q->rear)] = val;
+    }
+}
+int dequeue(Queue *q)
+{
+    if (!isQueueEmpty(q))
+    {
+        return q->arr[(q->front)++];
+    }
+    return -1; // Error or Empty
+}
+void printQueue(Queue *q)
+{
+    if (isQueueEmpty(q))
+    {
+        cout << "Queue is empty." << endl;
         return;
-    Node *t = top;
-    top = top->next;
-    delete t;
+    }
+    for (int i = q->front; i <= q->rear; i++)
+    {
+        cout << q->arr[i] << " ";
+    }
+    cout << endl;
 }
+
+// ==========================================
+// LAB TASK: IMPLEMENT THIS FUNCTION
+// ==========================================
+void reverseQueue(Queue *q)
+{
+    Stack *temp = new Stack;
+
+    for (int i = 0; i < 5; i++)
+    {
+        push(temp, q->front);
+        dequeue(q);
+    }
+
+    for (int j = 0; j < 5; j++)
+    {
+        enqueue(q, pop(temp));
+    }
+}
+// TODO: Create a temporary Stack here.
+// Use the push, pop, enqueue, and dequeue functions
+// to reverse the elements inside the Queue 'q'.
+// ==========================================
 
 int main()
 {
-    Package p1 = {"P1", "Istanbul", {1, 2, 3}};
-    Package p2 = {"P2", "Ankara", {4, 5, 6}};
-    Package p3 = {"P3", "Izmir", {7, 8, 9}};
+    Queue myQueue;
+    initQueue(&myQueue);
 
-    push(p1);
-    push(p2);
-    push(p3);
+    cout << "Please enter 5 integers:" << endl;
+    for (int i = 0; i < 5; i++)
+    {
+        int val;
+        cin >> val;
+        enqueue(&myQueue, val);
+    }
 
-    std::cout << "STACK:\n";
+    cout << "\nOriginal Queue: ";
+    printQueue(&myQueue);
 
-    pop();
+    // Call your function
+    reverseQueue(&myQueue);
+
+    cout << "Reversed Queue: ";
+    printQueue(&myQueue);
 
     return 0;
 }
